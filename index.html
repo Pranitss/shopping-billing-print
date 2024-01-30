@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shopping Billing</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+  .container {
+    width: 400px;
+    padding: 40px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    animation: slide-in 0.5s ease-out forwards;
+  }
+  @keyframes slide-in {
+    from {
+      opacity: 0;
+      transform: translateY(-50px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  h2 {
+    color: #343a40;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  label {
+    font-weight: bold;
+    color: #343a40;
+  }
+  input[type="text"],
+  input[type="number"],
+  textarea,
+  button {
+    padding: 10px;
+    margin-bottom: 20px;
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    font-size: 16px;
+    background-color: #f8f9fa;
+  }
+  input[type="number"] {
+    width: calc(50% - 10px);
+  }
+  textarea {
+    height: 100px;
+  }
+  button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  button:hover {
+    background-color: #0056b3;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    animation: fade-in 0.5s ease-out forwards;
+  }
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  th, td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+  }
+  th {
+    background-color: #f2f2f2;
+  }
+  .total {
+    font-weight: bold;
+    text-align: right;
+    font-size: 18px;
+    margin-top: 20px;
+  }
+  .thankyou-message {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 20px;
+    color: #28a745;
+    animation: pulse 1s infinite alternate;
+  }
+  @keyframes pulse {
+    from {
+      transform: scale(1);
+    }
+    to {
+      transform: scale(1.1);
+    }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h2>Shopping Billing</h2>
+  <label for="productName">Product Name:</label>
+  <input type="text" id="productName">
+  <label for="productDescription">Description:</label>
+  <textarea id="productDescription"></textarea>
+  <label for="productPrice">Product Price:</label>
+  <input type="number" id="productPrice" step="0.01">
+  <label for="productQuantity">Quantity:</label>
+  <input type="number" id="productQuantity" min="1">
+  <button onclick="addItem()">Add Item</button>
+  <table id="billingTable">
+    <thead>
+      <tr>
+        <th>Item</th>
+        <th>Description</th>
+        <th>Price</th>
+        <th>Quantity</th>
+        <th>Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Table rows will be dynamically added here -->
+    </tbody>
+  </table>
+  <label for="additionalComments">Additional Comments:</label>
+  <textarea id="additionalComments"></textarea>
+  <div class="total">Subtotal: $<span id="subtotalAmount">0.00</span><br>
+    Tax (5%): $<span id="taxAmount">0.00</span><br>
+    Grand Total: $<span id="grandTotalAmount">0.00</span></div>
+  <button onclick="printReceipt()">Print Receipt</button>
+  <div class="thankyou-message hidden">Thank you for shopping with us!</div>
+</div>
+
+<script>
+  let totalAmount = 0;
+  let subtotalAmount = 0;
+  let taxRate = 0.05;
+
+  function addItem() {
+    const productName = document.getElementById('productName').value;
+    const productDescription = document.getElementById('productDescription').value;
+    const productPrice = parseFloat(document.getElementById('productPrice').value);
+    const productQuantity = parseInt(document.getElementById('productQuantity').value);
+    if (productName && productPrice && productQuantity) {
+      const tableBody = document.querySelector('#billingTable tbody');
+      const newRow = tableBody.insertRow();
+      const total = productPrice * productQuantity;
+      subtotalAmount += total;
+      const taxAmount = subtotalAmount * taxRate;
+      totalAmount = subtotalAmount + taxAmount;
+      newRow.innerHTML = `
+        <td>${productName}</td>
+        <td>${productDescription}</td>
+        <td>$${productPrice.toFixed(2)}</td>
+        <td>${productQuantity}</td>
+        <td>$${total.toFixed(2)}</td>
+      `;
+      document.getElementById('subtotalAmount').textContent = subtotalAmount.toFixed(2);
+      document.getElementById('taxAmount').textContent = taxAmount.toFixed(2);
+      document.getElementById('grandTotalAmount').textContent = totalAmount.toFixed(2);
+    }
+  }
+
+  function printReceipt() {
+    window.print();
+    document.querySelector('.thankyou-message').classList.remove('hidden');
+  }
+</script>
+</body>
+</html>
